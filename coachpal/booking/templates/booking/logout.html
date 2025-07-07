@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<form method="post" action="{% url 'booking:logout' %}" class="logout-form">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+    </button>
+</form>
+
+<script src="{% static 'js/logout.js' %}"></script>
+{% endblock %}

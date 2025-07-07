@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1 class="rdv">Prendre un rendez-vous</h1>
+    <p class="rdv">"Les réservations sont disponibles uniquement du lundi au vendredi."</p>
+    <p class="rdv">"Les horaires valides sont 08h30-12h30 et 13h30-17h30."</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Réserver</button>
+    </form>
+{% endblock %}

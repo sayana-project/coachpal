@@ -1,0 +1,7 @@
+
+{% extends "base.html" %}
+{% block content %}
+ <h2>Bonjour {{ user.username|default:"cher visiteur" }} 👋</h2>
+ <p class="blocktext">CoachPal vous accompagne dans vos rendez-vous bien-être. Planifiez facilement une séance avec un coach certifié !</p>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% load group_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Coachpal{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'booking/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Coachpal</h1>
+        <nav>
+            <a href="{% url 'booking:acceuil' %}">Accueil</a>
+            {% if user.is_authenticated %}
+                {% if user|has_group:"coach" %}
+                    <a href="{% url 'booking:dashboard_coach' %}">Dashboard</a>
+                {% elif user|has_group:"client" %}
+                    <a href="{% url 'booking:dashboard_client' %}">Dashboard</a>
+                    <a href="{% url 'booking:form' %}">Réservation</a>
+                {% endif %}
+                <form action="{% url 'booking:logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">Déconnexion</button>
+                </form>
+            {% else %}
+                <a href="{% url 'booking:login' %}">Connexion</a>
+                <a href="{% url 'booking:signup' %}">Inscription</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        &copy; {% now "Y" %} Coachpal
+    </footer>
+</body>
+</html>
