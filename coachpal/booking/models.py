@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Booking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reservations')
-    coach = models.ForeignKey(User, on_delete=models.CASCADE, related_name='clients')
+    coach = models.ForeignKey(User, on_delete=models.CASCADE, related_name="coach_bookings")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="client_bookings")
     firstname = models.CharField(max_length=100)
     lastname = models.CharField(max_length=100)
     email = models.EmailField()

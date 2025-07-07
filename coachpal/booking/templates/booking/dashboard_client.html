@@ -2,6 +2,24 @@
 {% block content %}
 <h2>Bienvenue, {{ user.username }} (client)</h2>
 <p>Voici votre tableau de bord client.</p>
+	<table>
+		<tr>
+			<th>coach</th>
+      <th>date</th>
+      <th>time</th>
+      <th>modify</th>
+		</tr>
+{% for reservation in reservations %}
+    <p>{{reservation}}</p>
+		<tr>
+			<td>L2 C1</td>
+      <td>L2 C2</td>
+      <td>L2 C2</td>
+      <td>L2 C2</td>
+		</tr>
+
+{% endfor %}  
+	</table>
 <form action="{% url 'booking:logout' %}" method="post" style="display: inline;">
   {% csrf_token %}
   <button type="submit" class="btn-link" style="background:none; border:none; cursor:pointer; color:inherit;">

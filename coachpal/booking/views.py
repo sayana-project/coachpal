@@ -36,20 +36,20 @@ def dashboard_coach(request):
 def dashboard_client(request):
     if not request.user.groups.filter(name='client').exists():
         return HttpResponseForbidden("Accès réservé aux clients")
-    return render(request, 'booking/dashboard_client.html')
+    reservations = Booking.objects.filter(client=request.user).order_by('date', 'time')
+    return render(request, 'booking/dashboard_client.html',{'reservations': reservations})
 
 @login_required
 def book_appointment(request):
     if request.method == 'POST':
-        form = BookingForm(request.POST)
+        form = BookingForm(request.POST, user=request.user)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.user = request.user
-            appointment.coach = request.user.profile.coach  # récupère son coach
             appointment.save()
             return redirect('booking:success')
     else:
-        form = BookingForm()
+        form = BookingForm(user=request.user)
     return render(request, 'booking/form.html', {'form': form})
 
 def success(request):
