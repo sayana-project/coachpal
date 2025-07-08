@@ -34,9 +34,12 @@ def dashboard_coach(request):
     
     reservations = Booking.objects.filter(coach=request.user).order_by('date', 'time')
     today = date.today()
+    upcoming_reservations = reservations.filter(date__gte=today)
+    past_reservations = reservations.filter(date__lt=today)
     
     return render(request, 'booking/dashboard_coach.html', {
-        'reservations': reservations,
+        'upcoming_reservations': upcoming_reservations,
+        'past_reservations': past_reservations,
         'today': today
     })
 
@@ -44,12 +47,15 @@ def dashboard_coach(request):
 def dashboard_client(request):
     if not request.user.groups.filter(name='client').exists():
         return HttpResponseForbidden("Accès réservé aux clients")
-    
-    reservations = Booking.objects.filter(user=request.user).order_by('date', 'time')
     today = date.today()
+    reservations = Booking.objects.filter(user=request.user).order_by('-date', '-time')
+    upcoming_reservations = reservations.filter(date__gte=today)
+    past_reservations = reservations.filter(date__lt=today)
+
     
     return render(request, 'booking/dashboard_client.html', {
-        'reservations': reservations,
+        'upcoming_reservations': upcoming_reservations,
+        'past_reservations': past_reservations,
         'today': today
     })
 

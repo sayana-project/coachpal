@@ -9,6 +9,7 @@ class Booking(models.Model):
     email = models.EmailField()
     date = models.DateField()
     time = models.TimeField()
+    objet = models.CharField(max_length=200, blank=True)  # ← Ajouter ce champ
     created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
