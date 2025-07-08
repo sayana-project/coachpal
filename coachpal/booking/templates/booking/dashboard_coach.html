@@ -2,6 +2,61 @@
 {% block content %}
 <h2>Bienvenue, {{ user.username }} (coach)</h2>
 <p>Voici votre tableau de bord coach avec les rendez-vous.</p>
+<div class="dashboard-container">
+    <table class="reservations-table">
+        <thead>
+            <tr>
+                <th>Client</th>
+                <th>Email</th>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Message</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.user }}</td>
+                <td>{{ reservation.user.email }}</td>
+                <td>{{ reservation.date|date:"d/m/Y" }}</td>
+                <td>{{ reservation.time|time:"H:i" }}</td>
+                <td>{{ reservation.message|default:"Aucun message"|truncatewords:10 }}</td>
+                <td>
+                    {% if reservation.date > today %}
+                        <span class="status-upcoming">À venir</span>
+                    {% elif reservation.date == today %}
+                        <span class="status-today">Aujourd'hui</span>
+                    {% else %}
+                        <span class="status-past">Passé</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if reservation.date >= today %}
+                        <a href="{% url 'booking:modifier_reservation' %}" class="btn btn-primary btn-sm">Modifier</a>
+                        <form action="{% url 'booking:supprimer_reservation' %}" method="post" style="display: inline;">
+                        {% comment %} <a href="{% url 'booking:modifier_reservation' reservation.id %}" class="btn btn-primary btn-sm">Modifier</a>
+                        <form action="{% url 'booking:supprimer_reservation' reservation.id %}" method="post" style="display: inline;"> {% endcomment %}
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')">
+                                Supprimer
+                            </button>
+                        </form>
+                    {% else %}
+                        <span class="text-muted">Terminé</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">Aucune réservation pour le moment.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 <form action="{% url 'booking:logout' %}" method="post" style="display: inline;">
   {% csrf_token %}
   <button type="submit" class="btn-link" style="background:none; border:none; cursor:pointer; color:inherit;">
