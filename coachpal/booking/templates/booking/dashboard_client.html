@@ -32,8 +32,8 @@
             <td>
                {% comment %} <a href="{% url 'booking:modifier_reservation' reservation.id %}" class="btn btn-primary btn-sm">Modifier</a>
                         <form action="{% url 'booking:supprimer_reservation' reservation.id %}" method="post" style="display: inline;"> {% endcomment %}
-                <a href="{% url 'booking:modifier_reservation'  %}" class="btn btn-primary btn-sm">Modifier</a>
-                <form action="{% url 'booking:supprimer_reservation'  %}" method="post" style="display: inline;">
+                <a href="{% url 'booking:modifier_reservation' reservation.id %}" class="btn btn-primary btn-sm">Modifier</a>
+                <form action="{% url 'booking:supprimer_reservation' reservation.id %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')">
                         Annuler
@@ -62,7 +62,7 @@
     <tbody>
         {% for reservation in past_reservations %}
         <tr>
-            <td>{{ reservation.objet|default:"Aucun objet"|truncatewords:10 }}</td>
+            <td>{{ reservation.objet|default:"Aucun objet"|truncatewords:50 }}</td>
             <td>{{ reservation.coach }}</td>
             <td>{{ reservation.date|date:"d/m/Y" }}</td>
             <td>{{ reservation.time|time:"H:i" }}</td>

@@ -20,6 +20,6 @@ urlpatterns = [
     path('redirect-dashboard/', views.redirect_dashboard, name='redirect_dashboard'),
     path('dashboard_coach/', views.dashboard_coach, name='dashboard_coach'),
     path('dashboard_client/', views.dashboard_client, name='dashboard_client'),
-    path('modify/', views.modifier_reservation, name='modifier_reservation'),
-    path('delete/', views.supprimer_reservation, name='supprimer_reservation'),
+    path('modify/<int:pk>/', views.modifier_reservation, name='modifier_reservation'),
+    path('delete/<int:pk>/', views.supprimer_reservation, name='supprimer_reservation'),
 ]
