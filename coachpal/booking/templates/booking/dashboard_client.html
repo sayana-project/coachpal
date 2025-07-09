@@ -1,7 +1,79 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Bienvenue, {{ user.username }} (client)</h2>
-<p>Voici votre tableau de bord client.</p>
+
+<!-- Rendez-vous à venir ou aujourd'hui -->
+<h3>Rendez-vous à venir</h3>
+<table class="reservations-table">
+    <thead>
+        <tr>
+            <th>Objet</th>
+            <th>Coach</th>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in upcoming_reservations %}
+        <tr>
+            <td>{{ reservation.objet|default:"Aucun objet"|truncatewords:10 }}</td>
+            <td>{{ reservation.coach }}</td>
+            <td>{{ reservation.date|date:"d/m/Y" }}</td>
+            <td>{{ reservation.time|time:"H:i" }}</td>
+            <td>
+                {% if reservation.date == today %}
+                    <span class="status-today">Aujourd'hui</span>
+                {% else %}
+                    <span class="status-upcoming">À venir</span>
+                {% endif %}
+            </td>
+            <td>
+               {% comment %} <a href="{% url 'booking:modifier_reservation' reservation.id %}" class="btn btn-primary btn-sm">Modifier</a>
+                        <form action="{% url 'booking:supprimer_reservation' reservation.id %}" method="post" style="display: inline;"> {% endcomment %}
+                <a href="{% url 'booking:modifier_reservation'  %}" class="btn btn-primary btn-sm">Modifier</a>
+                <form action="{% url 'booking:supprimer_reservation'  %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')">
+                        Annuler
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center">Aucun rendez-vous à venir.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Rendez-vous passés -->
+<h3>Rendez-vous passés</h3>
+<table class="reservations-table">
+    <thead>
+        <tr>
+            <th>Objet</th>
+            <th>Coach</th>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in past_reservations %}
+        <tr>
+            <td>{{ reservation.objet|default:"Aucun objet"|truncatewords:10 }}</td>
+            <td>{{ reservation.coach }}</td>
+            <td>{{ reservation.date|date:"d/m/Y" }}</td>
+            <td>{{ reservation.time|time:"H:i" }}</td>
+            <td><span class="status-past">Passé</span></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center">Aucun rendez-vous passé.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 <form action="{% url 'booking:logout' %}" method="post" style="display: inline;">
   {% csrf_token %}
   <button type="submit" class="btn-link" style="background:none; border:none; cursor:pointer; color:inherit;">

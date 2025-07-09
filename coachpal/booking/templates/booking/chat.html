@@ -1,0 +1,30 @@
+
+{% extends "base.html" %}
+{% block content %}
+<form id="chat-form" method="post">
+  {% csrf_token %}
+  <textarea id="message" rows="3" placeholder="Écris ton message ici..."></textarea>
+  <button type="submit">Envoyer</button>
+</form>
+
+<div id="chat-box"></div>
+
+<script>
+document.getElementById('chat-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const message = document.getElementById('message').value;
+  const response = await fetch("", {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": "{{ csrf_token }}",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "message=" + encodeURIComponent(message)
+  });
+  const data = await response.json();
+  document.getElementById("chat-box").innerHTML += "<p><strong>Moi:</strong> " + message + "</p>";
+  document.getElementById("chat-box").innerHTML += "<p><strong>IA:</strong> " + data.response + "</p>";
+  document.getElementById('message').value = "";
+});
+</script>
+{% endblock %}

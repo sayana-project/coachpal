@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from .forms import BookingForm
@@ -12,6 +12,8 @@ from .models import Booking,Profile
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import date
 
 def acceuil(request):
     return render(request, 'booking/acceuil.html')
@@ -29,27 +31,45 @@ def redirect_dashboard(request):
 def dashboard_coach(request):
     if not request.user.groups.filter(name='coach').exists():
         return HttpResponseForbidden("Accès réservé aux coachs")
+    
     reservations = Booking.objects.filter(coach=request.user).order_by('date', 'time')
-    return render(request, 'booking/dashboard_coach.html', {'reservations': reservations})
+    today = date.today()
+    upcoming_reservations = reservations.filter(date__gte=today)
+    past_reservations = reservations.filter(date__lt=today)
+    
+    return render(request, 'booking/dashboard_coach.html', {
+        'upcoming_reservations': upcoming_reservations,
+        'past_reservations': past_reservations,
+        'today': today
+    })
 
 @login_required
 def dashboard_client(request):
     if not request.user.groups.filter(name='client').exists():
         return HttpResponseForbidden("Accès réservé aux clients")
-    return render(request, 'booking/dashboard_client.html')
+    today = date.today()
+    reservations = Booking.objects.filter(user=request.user).order_by('-date', '-time')
+    upcoming_reservations = reservations.filter(date__gte=today)
+    past_reservations = reservations.filter(date__lt=today)
+
+    
+    return render(request, 'booking/dashboard_client.html', {
+        'upcoming_reservations': upcoming_reservations,
+        'past_reservations': past_reservations,
+        'today': today
+    })
 
 @login_required
 def book_appointment(request):
     if request.method == 'POST':
-        form = BookingForm(request.POST)
+        form = BookingForm(request.POST, user=request.user)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.user = request.user
-            appointment.coach = request.user.profile.coach  # récupère son coach
             appointment.save()
             return redirect('booking:success')
     else:
-        form = BookingForm()
+        form = BookingForm(user=request.user)
     return render(request, 'booking/form.html', {'form': form})
 
 def success(request):
@@ -75,20 +95,40 @@ def custom_logout(request):
     logout(request)
     return redirect('booking:acceuil')
 
+@login_required
+def modifier_reservation(request, reservation_id):
+    reservation = get_object_or_404(Booking, id=reservation_id)
+    
+    # Vérifier que l'utilisateur peut modifier cette réservation
+    if not (reservation.user == request.user or reservation.coach == request.user):
+        return HttpResponseForbidden("Vous n'avez pas le droit de modifier cette réservation")
+    
+    if request.method == 'POST':
+        form = BookingForm(request.POST, instance=reservation, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('booking:dashboard_client' if request.user.groups.filter(name='client').exists() else 'booking:dashboard_coach')
+    else:
+        form = BookingForm(instance=reservation, user=request.user)
+    
+    return render(request, 'booking/modifier_reservation.html', {'form': form, 'reservation': reservation})
+
+@login_required
+def supprimer_reservation(request, reservation_id):
+    reservation = get_object_or_404(Booking, id=reservation_id)
+    
+    # Vérifier que l'utilisateur peut supprimer cette réservation
+    if not (reservation.user == request.user or reservation.coach == request.user):
+        return HttpResponseForbidden("Vous n'avez pas le droit de supprimer cette réservation")
+    
+    if request.method == 'POST':
+        reservation.delete()
+        messages.success(request, "Réservation supprimée avec succès.")
+        return redirect('booking:dashboard_client' if request.user.groups.filter(name='client').exists() else 'booking:dashboard_coach')
+    
+    return render(request, 'booking/confirmer_suppression.html', {'reservation': reservation})
+
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-        
-from django.contrib.auth.decorators import user_passes_test
-
-def group_required(group_name):
-    return user_passes_test(lambda u: u.is_authenticated and u.groups.filter(name=group_name).exists())
-
-@group_required('coach')
-def dashboard_coach(request):
-    return render(request, 'booking/dashboard_coach.html')
-
-@group_required('client')
-def dashboard_client(request):
-    return render(request, 'booking/dashboard_client.html')
