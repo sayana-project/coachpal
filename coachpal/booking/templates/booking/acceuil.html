@@ -1,7 +1,50 @@
-
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
  <h2>Bonjour {{ user.username|default:"cher visiteur" }} 👋</h2>
  <p class="blocktext">CoachPal vous accompagne dans vos rendez-vous bien-être. Planifiez facilement une séance avec un coach certifié !</p>
 
+<div class="coach-profile" style="display: flex; align-items: flex-start; border: 1px solid #ccc; padding: 20px; border-radius: 8px; max-width: 1100px; gap: 30px; margin-bottom: 30px;">
+  <!-- Image à gauche -->
+  <div style="flex-shrink: 0;">
+    <img src="{% static 'booking/images/coach_photo.png' %}" alt="Photo du coach" width="600" style="border-radius: 8px;" />
+    <p style="margin-top: 15px;"><strong>Email :</strong><br>JRSolario@example.com</p>
+    <p><strong>Tarif :</strong><br>399.99 € / séance</p>
+  </div>
+
+  <!-- Texte à droite -->
+  <div style="flex: 1;">
+    <h2 style="margin-top: 0;">Jean-René Solario</h2>
+    <p><strong>Alias :</strong> Le Moine du Muscle<br>
+    <strong>Profession :</strong> Coach de développement personnel… et spirituel extrême.</p>
+
+    <p><strong>Philosophie :</strong><br>
+    Jean-René prône un mode de vie détaché des possessions… sauf celles de ses clients. Pour lui, le bonheur s’atteint par la transcendance du matérialisme, ce qui commence par payer 399 € la séance d’introspection musculaire.<br>
+    <em>« Plus tu t’allèges de ton argent, plus tu t’élèves dans ton âme. »</em> — Jean-René, séance 1.</p>
+
+    <p><strong>Formation :</strong><br>
+    • 3 mois dans un monastère tibétain… virtuel.<br>
+    • Diplômé “Yoga & Business” (YouTube).<br>
+    • A lu *Le Pouvoir du Moment Présent* jusqu’à la page 12.<br>
+    • Révélation en benchant un dictionnaire Larousse.</p>
+
+    <p><strong>Méthodes :</strong><br>
+    • <em>Stretching de l’ego</em> : étirez votre confiance jusqu’à la rupture.<br>
+    • <em>Affirmations bancaires</em> : “Je n’ai pas besoin d’argent... sauf pour mes sessions.”<br>
+    • <em>Squats de gratitude</em> : 1 squat = 1 bénédiction à votre banquier.</p>
+
+    <p><strong>🌟 Témoignages :</strong><br>
+    “J’ai tout perdu. Ma voiture, mon compte en banque, mon stress. Merci Jean-René.”<br>
+    “Il m’a appris à me détacher des objets… y compris de mon appartement.”</p>
+
+    <p><strong>🧘‍♂️ Citation favorite :</strong><br>
+    <em>“Les riches ne sont pas ceux qui ont de l’argent, mais ceux qui savent le donner... à moi.”</em></p>
+
+    <p><strong>🎯 Objectif :</strong><br>
+    Sauver la société de la superficialité… un virement à la fois.</p>
+  </div>
+</div>
+
 {% endblock %}
+
+ 

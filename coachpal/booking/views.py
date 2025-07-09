@@ -96,15 +96,14 @@ def custom_logout(request):
     return redirect('booking:acceuil')
 
 @login_required
-def modifier_reservation(request, reservation_id):
-    reservation = get_object_or_404(Booking, id=reservation_id)
+def modifier_reservation(request, pk):
+    reservation = get_object_or_404(Booking, id=pk)
     
-    # Vérifier que l'utilisateur peut modifier cette réservation
     if not (reservation.user == request.user or reservation.coach == request.user):
         return HttpResponseForbidden("Vous n'avez pas le droit de modifier cette réservation")
     
     if request.method == 'POST':
-        form = BookingForm(request.POST, instance=reservation, user=request.user)
+        form = BookingForm(request.POST, instance=reservation)
         if form.is_valid():
             form.save()
             return redirect('booking:dashboard_client' if request.user.groups.filter(name='client').exists() else 'booking:dashboard_coach')
@@ -114,10 +113,9 @@ def modifier_reservation(request, reservation_id):
     return render(request, 'booking/modifier_reservation.html', {'form': form, 'reservation': reservation})
 
 @login_required
-def supprimer_reservation(request, reservation_id):
-    reservation = get_object_or_404(Booking, id=reservation_id)
+def supprimer_reservation(request, pk):
+    reservation = get_object_or_404(Booking, id=pk)
     
-    # Vérifier que l'utilisateur peut supprimer cette réservation
     if not (reservation.user == request.user or reservation.coach == request.user):
         return HttpResponseForbidden("Vous n'avez pas le droit de supprimer cette réservation")
     

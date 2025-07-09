@@ -7,6 +7,7 @@ class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
         fields = ['objet','coach', 'date', 'time', 'firstname', 'lastname', 'email']
+        exclude = ['user']  # On exclut le champ 'user'
     
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)  # utilisateur connecté
