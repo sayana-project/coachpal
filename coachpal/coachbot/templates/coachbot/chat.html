@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>CoachBot</h1>
+
+<div id="chat-box" style="margin-bottom: 1rem; max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
+
+<form id="chat-form">
+    <input type="text" id="message" placeholder="Tape ton message" required>
+    <button type="submit">Envoyer</button>
+</form>
+
+<!-- Toast notification -->
+<style>
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #ff4d4f;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 9999;
+    animation: fadein 0.5s, fadeout 0.5s 3s;
+}
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeout {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translateY(20px); }
+}
+</style>
+
+<script>
+const chatBox = document.getElementById("chat-box");
+const form = document.getElementById("chat-form");
+const messageInput = document.getElementById("message");
+
+form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    appendMessage("user", message);
+    messageInput.value = "";
+
+    try {
+        const response = await fetch("/coachbot/chat/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({ message: message }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Erreur HTTP:", response.status, errorText);
+            showToast(`⚠️ Erreur serveur (${response.status})`);
+            appendMessage("bot", `⚠️ Erreur serveur (${response.status})`);
+            return;
+        }
+
+        const data = await response.json();
+        appendMessage("bot", data.response || "Réponse vide");
+    } catch (error) {
+        console.error("Erreur JS:", error);
+        showToast("⚠️ Erreur technique (voir console)");
+        appendMessage("bot", "⚠️ Erreur inattendue");
+    }
+});
+
+function appendMessage(sender, text) {
+    const messageEl = document.createElement("div");
+    messageEl.className = "message " + sender;
+    messageEl.textContent = (sender === "user" ? "👤 " : "🤖 ") + text;
+    chatBox.appendChild(messageEl);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function showToast(message) {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (const cookieRaw of cookies) {
+            const cookie = cookieRaw.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

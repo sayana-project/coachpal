@@ -17,6 +17,7 @@
             {% if user.is_authenticated %}
                 {% if user|has_group:"coach" %}
                     <a href="{% url 'booking:dashboard_coach' %}">Dashboard</a>
+                    <a href="{% url 'chat_page' %}">CoachBot</a>
                 {% elif user|has_group:"client" %}
                     <a href="{% url 'booking:dashboard_client' %}">Dashboard</a>
                     <a href="{% url 'booking:form' %}">Réservation</a>
