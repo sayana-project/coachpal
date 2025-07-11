@@ -23,7 +23,6 @@ class AgentManager:
     def initialize(self, settings, tools=None):
         
         self._settings = settings
-        print(self._settings.agent_model.api_key.get_secret_value()[:5])
         if self._executor is None:
             self._executor = self._create_executor(tools or [])
         return self
