@@ -1,0 +1,11 @@
+django
+langchain
+openai  
+deepseek-openai          
+python-dotenv
+tqdm                     
+requests               
+djangorestframework
+langchain-community
+langchain-deepseek
+django-environ

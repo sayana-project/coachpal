@@ -15,7 +15,7 @@ class Settings:
         self.agent_model = ChatDeepSeek(
             temperature=0.7,
             model="deepseek-chat",
-            api_key=sk_key  # Remplace par ta vraie clé
+            api_key=sk_key
         )
 
         # 🔍 Optionnel : afficher la clé pour debug
