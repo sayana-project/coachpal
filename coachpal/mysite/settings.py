@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'booking',
+    'coachbot',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +69,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
-
+#CSRF_FAILURE_VIEW = 'django.views.defaults.csrf_failure'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
