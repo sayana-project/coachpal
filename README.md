@@ -1,5 +1,5 @@
 # 🧭 CoachPal - Plateforme de Réservation de Séances de Coaching
-
+![coachbot](./images/img2.png)
 **CoachPal** est une application Django qui permet aux clients de réserver des séances de coaching personnel avec des coachs certifiés. La plateforme gère la disponibilité, les créneaux horaires, les rôles utilisateurs et la prise de rendez-vous selon des règles strictes.
 
 ---
@@ -20,7 +20,7 @@
   - Identifie les déséquilibres (physique, mental ou émotionnel)
   - Propose des conseils pratiques et personnalisés pour chaque domaine
   - Invite à la réflexion avec des questions ciblées et une approche bienveillante
-
+![coachbot](./images/img.png)
 ---
 
 ## 🛠️ Technologies utilisées
